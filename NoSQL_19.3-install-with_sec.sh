@@ -3,6 +3,8 @@
 
 # Installation code for a 3x3 cluster with security (password file)
 
+# All Nodes
+
 ### ENVIRONMENT VARIABLES
 
 KVHOME=/home/opc/kv-19.3.12
@@ -90,7 +92,7 @@ plan deploy-admin -sn sn2 -wait
 plan deploy-sn -zn zn1 -host storage-node-3 -port 5000 -wait
 plan deploy-admin -sn sn3 -wait
 
-## CRIA O POOL
+## Create the pool
 
 pool create -name myPool
 pool join -name myPool -sn sn1
@@ -109,10 +111,7 @@ java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar securityconfig pwdfile secre
 echo "oracle.kv.auth.username=root" >> $KVROOT/security/adminlogin.txt
 echo "oracle.kv.auth.pwdfile.file=/ondb/root/security/adminlogin.passwd" >> $KVROOT/security/adminlogin.txt 
 
-
-Acesso admin: java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar runadmin -port 5000 -host storage-node-1 -security $KVROOT/security/adminlogin.txt -store kvstore
-Acesso client: java -jar $KVHOME/lib/sql.jar -helper-hosts storage-node-1:5000 -store kvstore -security $KVROOT/security/userlogin.txt
- 
+Admin access: java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar runadmin -port 5000 -host storage-node-1 -security $KVROOT/security/adminlogin.txt -store kvstore
 
 # Generate access to clients:
 
@@ -136,11 +135,11 @@ $KVROOT/security/userlogin.passwd
 $KVROOT/security/client.trust
 
  
-# Shutdown
+# Shutdown all nodes
 java -Xmx64m -Xms64m -jar $KVHOME/lib/kvstore.jar stop -root $KVROOT
 
 
-# Start
+# Start all nodes
 nohup java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar start -root $KVROOT &
 
 # connect with client
