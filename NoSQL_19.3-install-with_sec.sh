@@ -71,6 +71,7 @@ java -Xmx64m -Xms64m -jar $KVHOME/lib/kvstore.jar ping -host storage-node-1 -por
 java -Xmx64m -Xms64m -jar $KVHOME/lib/kvstore.jar ping -host storage-node-2 -port 5000
 java -Xmx64m -Xms64m -jar $KVHOME/lib/kvstore.jar ping -host storage-node-3 -port 5000
 
+# should return something like "Could not contact any RepNode at: [storage-node-1:5000]"
 
 # From one node the following statements:
 java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar runadmin -port 5000 -host storage-node-1 -security $KVROOT/security/client.security
@@ -105,13 +106,14 @@ topology create -name 3x3 -pool myPool -partitions 120
 plan deploy-topology -name 3x3 -wait
 show topology
 
-java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar securityconfig pwdfile create -file $KVROOT/security/login.passwd
-java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar securityconfig pwdfile secret -file $KVROOT/security/login.passwd -set -alias root
+java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar securityconfig pwdfile create -file $KVROOT/security/adminlogin.passwd
+java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar securityconfig pwdfile secret -file $KVROOT/security/adminlogin.passwd -set -alias root
 
-echo "oracle.kv.auth.username=root" >> $KVROOT/security/adminlogin.txt
-echo "oracle.kv.auth.pwdfile.file=/ondb/root/security/adminlogin.passwd" >> $KVROOT/security/adminlogin.txt 
+cp client.security admin.security
+echo "oracle.kv.auth.username=root" >> $KVROOT/security/admin.security
+echo "oracle.kv.auth.pwdfile.file=/ondb/root/security/adminlogin.passwd" >> $KVROOT/security/admin.security 
 
-Admin access: java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar runadmin -port 5000 -host storage-node-1 -security $KVROOT/security/adminlogin.txt -store kvstore
+Admin access: java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar runadmin -port 5000 -host storage-node-1 -security $KVROOT/security/admin.security -store kvstore
 
 # Generate access to clients:
 java -jar $KVHOME/lib/kvstore.jar runadmin -port 5000 -host storage-node-1 -security $KVROOT/security/adminlogin.txt -store kvstore
