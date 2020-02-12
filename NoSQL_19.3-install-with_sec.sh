@@ -116,7 +116,7 @@ echo "oracle.kv.auth.pwdfile.file=/ondb/root/security/adminlogin.passwd" >> $KVR
 Admin access: java -Xmx256m -Xms256m -jar $KVHOME/lib/kvstore.jar runadmin -port 5000 -host storage-node-1 -security $KVROOT/security/admin.security -store kvstore
 
 # Generate access to clients:
-java -jar $KVHOME/lib/kvstore.jar runadmin -port 5000 -host storage-node-1 -security $KVROOT/security/adminlogin.txt -store kvstore
+java -jar $KVHOME/lib/kvstore.jar runadmin -port 5000 -host storage-node-1 -security $KVROOT/security/admin.security -store kvstore
 execute 'CREATE USER Fernando IDENTIFIED BY "oracle123"';
 execute 'GRANT DBADMIN TO USER Fernando';
 execute 'GRANT READWRITE TO USER Fernando';
